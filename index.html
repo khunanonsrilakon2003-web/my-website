@@ -155,39 +155,23 @@
 
   console.log("✅ ระบบพร้อมใช้งาน");
   
-/* ===============================
-   CONFIG
-=============================== */
+// ===============================
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxlJ3C7jR90rWLAv-yH1qLlW2eo4sO35wcmv3jzxjDeNDZg8UXmgrjcYfPX344E1pip/exec";
-// 🔴 เปลี่ยน XXXX เป็น URL GAS ของคุณ
 
-/* ===============================
-   GAS จะเรียกฟังก์ชันนี้
-=============================== */
-function receiveFloor(floor) {
-  console.log("📥 รับค่าจาก Sheet:", floor);
-  showFloor(parseInt(floor));
-}
-
-/* ===============================
-   โหลดค่าจาก Google Sheet (JSONP)
-=============================== */
-function loadFloorFromSheet() {
-  const script = document.createElement("script");
-  script.src = GAS_URL + "?callback=receiveFloor&t=" + Date.now();
-  script.onload = () => script.remove();
-  document.body.appendChild(script);
-}
-
-/* ===============================
-   ดึงค่าทุก 2 วินาที
-=============================== */
-setInterval(loadFloorFromSheet, 2000);
-
+setInterval(() => {
+  fetch(GAS_URL)
+    .then(res => res.text())
+    .then(floor => {
+      console.log("floor =", floor);
+      showFloor(parseInt(floor));
+    })
+    .catch(err => console.error(err));
+}, 2000);
 </script>
 
 </body>
 </html>
+
 
 
 

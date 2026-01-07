@@ -157,16 +157,15 @@
   console.log("✅ ระบบพร้อมใช้งาน");
   
 // === ดึงค่าล่าสุดจาก Google Apps Script (อ่านอย่างเดียว) ===
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzUEZWLtg4j7O5tlmFGuNnJ1QMrbKYvGlYkBGnPtePguUnAqwUQQJkDFLfNmpEyUwGJ/exec"; // 🔴 ใส่ URL จริง
+console.log("✅ ระบบพร้อมใช้งาน");
+  
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzUEZWLtg4j7O5tlmFGuNnJ1QMrbKYvGlYkBGnPtePguUnAqwUQQJkDFLfNmpEyUwGJ/exec";
 
 setInterval(() => {
   fetch(GAS_URL)
     .then(res => res.text())
-    .then(floor => {
-      console.log("ค่าล่าสุดจาก Sheet:", floor);
-      showFloor(floor);
-    })
-    .catch(err => console.error("อ่านค่าไม่ได้:", err));
+    .then(floor => showFloor(floor))
+    .catch(err => console.error(err));
 }, 2000);
 
 </script>
@@ -174,4 +173,5 @@ setInterval(() => {
 </body>
 
 </html>
+
 

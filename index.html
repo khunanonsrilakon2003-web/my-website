@@ -164,7 +164,7 @@ function sendFloorToSheet(floor) {
 
   lastSentFloor = floor;
  
-  fetch("https://script.google.com/macros/s/AKfycbyRA4zhNpXHBQuGsaUl5sPPWUomi-eUi0_yWe8181i1FTHc_Qj28d25kjRo9HuTMkUi/exec?floor=" + floor)
+  fetch("https://script.google.com/macros/s/AKfycbzUEZWLtg4j7O5tlmFGuNnJ1QMrbKYvGlYkBGnPtePguUnAqwUQQJkDFLfNmpEyUwGJ/exec" + floor)
     .then(res => res.text())
     .then(txt => console.log("ส่งแล้ว:", txt));
 
@@ -173,4 +173,5 @@ function sendFloorToSheet(floor) {
 </script>
 
 </body>
+
 </html>

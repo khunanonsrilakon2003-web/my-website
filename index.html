@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>แผนที่โมเดลตึก 3 ชั้น</title>
+
+<style>
+  body {
+    text-align: center;
+    font-family: sans-serif;
+    background: #f2f2f2;
+    padding: 20px;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  /* ===== ปุ่ม ===== */
+  .controls {
+    margin-bottom: 15px;
+  }
+
+  .floor-btn {
+    margin: 5px;
+    padding: 10px 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #c8e6c9;   /* เขียวอ่อน */
+    color: #2e7d32;
+    cursor: pointer;
+  }
+
+  .floor-btn.active {
+    background: #2e7d32;   /* เขียวเข้ม */
+    color: white;
+    font-weight: bold;
+  }
+
+  .auto-btn {
+    margin-left: 10px;
+    padding: 10px 18px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+  }
+
+  /* ===== กล่องรูป ===== */
+  .map-box {
+    position: relative;
+    display: inline-block;
+    margin-top: 15px;
+  }
+
+  #map {
+    max-width: 600px;
+  }
+
+  #ladder {
+    position: absolute;
+    width: 90px;
+    opacity: 0.45;
+    display: none; /* ซ่อนไว้ก่อน */
+    pointer-events: none;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>แผนที่โมเดลตึก 3 ชั้น</h2>
+
+<div class="controls">
+  <button class="floor-btn" onclick="showFloor(1)">ชั้น 1</button>
+  <button class="floor-btn" onclick="showFloor(2)">ชั้น 2</button>
+  <button class="floor-btn" onclick="showFloor(3)">ชั้น 3</button>
+  <button class="auto-btn" onclick="autoMode()">อัตโนมัติ</button>
+</div>
+
+<div class="map-box">
+  <img id="map" src="floor1.png">
+  <img id="ladder" src="ladder.png">
+</div>
+
+<script>
+  let autoTimer = null;
+  let autoFloor = 1;
+
+  function clearActiveButton() {
+    document.querySelectorAll(".floor-btn")
+      .forEach(btn => btn.classList.remove("active"));
+  }
+
+  function showFloor(floor) {
+    const map = document.getElementById("map");
+    const ladder = document.getElementById("ladder");
+    const buttons = document.querySelectorAll(".floor-btn");
+
+    // ปิดโหมดอัตโนมัติถ้ากดเอง
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+
+    clearActiveButton();
+    buttons[floor - 1].classList.add("active");
+
+    ladder.style.display = "none";
+
+    if (floor === 1) {
+      map.src = "floor1.png";
+      ladder.style.top = "68%";
+      ladder.style.left = "60%";
+    }
+
+    if (floor === 2) {
+      map.src = "floor2.png";
+      ladder.style.top = "44%";
+      ladder.style.left = "60%";
+    }
+
+    if (floor === 3) {
+      map.src = "floor3.png";
+      ladder.style.top = "20%";
+      ladder.style.left = "60%";
+    }
+
+    ladder.style.display = "block";
+    // ⭐⭐⭐ ส่งค่าไป Google Sheet 
+  sendFloorToSheet(floor);
+  }
+
+  function autoMode() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      return;
+    }
+
+    autoTimer = setInterval(() => {
+      showFloor(autoFloor);
+      autoFloor++;
+      if (autoFloor > 3) autoFloor = 1;
+    }, 2000);
+  }
+
+  // สำหรับ ESP32 เรียกจากภายนอก
+  window.setFloorFromESP = function(floor) 
+  {
+    showFloor(floor);
+  };
+
+  console.log("✅ ระบบพร้อมใช้งาน");
+  
+// ฟังก์ชันส่งไป Google Apps Script
+let lastSentFloor = null;
+
+function sendFloorToSheet(floor) {
+  if (floor === lastSentFloor) return; // ❌ ชั้นเดิม ไม่ส่ง
+
+  lastSentFloor = floor;
+ 
+  fetch("https://script.google.com/macros/s/AKfycbyRA4zhNpXHBQuGsaUl5sPPWUomi-eUi0_yWe8181i1FTHc_Qj28d25kjRo9HuTMkUi/exec?floor=" + floor)
+    .then(res => res.text())
+    .then(txt => console.log("ส่งแล้ว:", txt));
+
+}
+
+</script>
+
+</body>
+</html>

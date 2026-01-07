@@ -156,22 +156,22 @@
 
   console.log("✅ ระบบพร้อมใช้งาน");
   
-// ฟังก์ชันส่งไป Google Apps Script
-let lastSentFloor = null;
+// === ดึงค่าล่าสุดจาก Google Apps Script (อ่านอย่างเดียว) ===
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzUEZWLtg4j7O5tlmFGuNnJ1QMrbKYvGlYkBGnPtePguUnAqwUQQJkDFLfNmpEyUwGJ/exec"; // 🔴 ใส่ URL จริง
 
-function sendFloorToSheet(floor) {
-  if (floor === lastSentFloor) return; // ❌ ชั้นเดิม ไม่ส่ง
-
-  lastSentFloor = floor;
- 
-  fetch("https://script.google.com/macros/s/AKfycbzUEZWLtg4j7O5tlmFGuNnJ1QMrbKYvGlYkBGnPtePguUnAqwUQQJkDFLfNmpEyUwGJ/exec" + floor)
+setInterval(() => {
+  fetch(GAS_URL)
     .then(res => res.text())
-    .then(txt => console.log("ส่งแล้ว:", txt));
-
-}
+    .then(floor => {
+      console.log("ค่าล่าสุดจาก Sheet:", floor);
+      showFloor(floor);
+    })
+    .catch(err => console.error("อ่านค่าไม่ได้:", err));
+}, 2000);
 
 </script>
 
 </body>
 
 </html>
+
